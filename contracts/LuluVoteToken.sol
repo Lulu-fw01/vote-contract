@@ -3,6 +3,7 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "./Participant.sol";
 
 contract LuluVoteToken is ERC20 {
     uint256 constant _initial_supply = 100 * (10**18);
@@ -14,27 +15,46 @@ contract LuluVoteToken is ERC20 {
     }
 
     event participantAdded(address addr);
+    event voted(address addr);
 
     // Contract creator.
     address private owner;
 
-    address[] participants;
+    //address[] participants;
+    mapping(address => Participant.Info) participants;
 
     modifier IsOwner(address addr) {
         require(owner == addr, "You are not owner.");
         _;
     }
 
-    modifier NewParticipant(address addr) {
-        
+    modifier IsParticipant(address addr) {
+        require(participants[addr].isInfo, "You are not participant");
+        _;
     }
 
-    function addParticipant(address newParticipnt) public IsOwner(msg.sender) {
-        participants.push(newParticipnt);
-        emit participantAdded(newParticipnt);
+    /**
+     * Add participant to voting session.
+     *
+     */
+    function addParticipant(address newParticipant) public IsOwner(msg.sender) {
+        participants[newParticipant].voted = false;
+        participants[newParticipant].isInfo = true;
+        emit participantAdded(newParticipant);
     }
 
-    function getOwner() public view returns(address) {
+    function vote(uint voteNum) public IsParticipant(msg.sender) {
+        // TODO add modifier which check voteNum.
+        participants[msg.sender].voteNum = voteNum;
+        emit voted(msg.sender);
+    }
+
+    /**
+     * Get owner of the contract.
+     *
+     * @return owner address of the contract.
+     */
+    function getOwner() public view returns (address) {
         return owner;
     }
 }

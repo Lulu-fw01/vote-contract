@@ -32,4 +32,14 @@ describe("LuluVoteToken Tests.", function () {
 
     });
 
+    it("Vote happy path test.", async () => {
+        const { voteToken, owner, addr1 } = await loadFixture(deployTokenFixture);
+        await voteToken.connect(owner).addParticipant(await addr1.getAddress());
+        await expect(voteToken.connect(addr1).vote(0)).to.emit(voteToken, "voted").withArgs(await addr1.getAddress());
+    });
+
+    it("You can't vote test.", async () => {
+
+    });
+
 });
