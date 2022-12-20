@@ -5,11 +5,10 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./VoteLibrary.sol";
 
-contract LuluVoteToken is ERC20 {
+contract LuluVoteToken {
     uint256 constant _initial_supply = 100 * (10**18);
 
-    constructor() ERC20("LuluVoteToken", "LVT") {
-        _mint(msg.sender, _initial_supply);
+    constructor() {
         owner = msg.sender;
         currentState = VoteLibrary.VotingState.CREATED;
     }
